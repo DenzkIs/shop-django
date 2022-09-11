@@ -22,6 +22,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('shop.urls')),  # ссылаемся на shop.urls, там джанго будет искать нужный адрес
+    path('users/', include('users.urls')),
 ]
 
 if settings.DEBUG:
