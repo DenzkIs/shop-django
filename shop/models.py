@@ -67,10 +67,10 @@ class Toner(models.Model):
     #         img.save(self.image.path)
 
 
-class Profile(models.Model):
-
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    company_name = models.CharField(max_length=255)
-    address = models.CharField(max_length=255)
+# class Profile(models.Model):
+#
+#     owner = models.ForeignKey(User, on_delete=models.CASCADE)
+#     company_name = models.CharField(max_length=255)
+#     address = models.CharField(max_length=255)
 
 
