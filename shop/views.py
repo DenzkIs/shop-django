@@ -1,7 +1,24 @@
 from django.shortcuts import render
 from shop.models import *
-from django.views.generic import DetailView, ListView
+from users.models import Profile
+from django.views.generic import DetailView, ListView, View
 
+
+class CartView(View):
+
+    # model = Cart
+    # context_object_name = 'cart'
+    # template_name = 'shop/cart.html'
+
+    def get(self, request, *args, **kwargs):
+        customer = Profile.objects.get(user=request.user)
+        print(customer)
+        cart = Cart.objects.get(owner=customer)
+        print(cart)
+        context = {
+            'cart': cart,
+        }
+        return render(request, 'shop/cart.html', context)
 
 class PrinterDetailView(DetailView):
     model = Printer

@@ -5,6 +5,7 @@ from shop.views import (
     BwPrintersListView,
     ColorPrintersListView,
     TonersListView,
+    CartView,
 
 )
 
@@ -17,5 +18,7 @@ urlpatterns = [
     path('bw-printers/', BwPrintersListView.as_view(), name='bw-printers'),
     path('color-printers/', ColorPrintersListView.as_view(), name='color-printers'),
     path('toners/', TonersListView.as_view(), name='toners'),
+    path('cart/', CartView.as_view(), name='cart'),
+
 
 ]
