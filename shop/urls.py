@@ -6,6 +6,7 @@ from shop.views import (
     ColorPrintersListView,
     TonersListView,
     CartView,
+    AddToCartView,
 
 )
 
@@ -19,6 +20,7 @@ urlpatterns = [
     path('color-printers/', ColorPrintersListView.as_view(), name='color-printers'),
     path('toners/', TonersListView.as_view(), name='toners'),
     path('cart/', CartView.as_view(), name='cart'),
+    path('add-to-cart/toner/<slug>/', AddToCartView.as_view(), name='add_to_cart'),
 
 
 ]
