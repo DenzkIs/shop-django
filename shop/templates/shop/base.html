@@ -47,13 +47,15 @@
                             <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Регистрация</a></li>
                         {% endif %}
                     </ul>
-                    <form class="d-flex">
-                        <a class="btn btn-outline-primary" href="{% url 'cart' %}">
-                            <i class="bi-cart-fill me-1"></i>
-                            Корзина
-                            <span class="badge bg-primary text-white ms-1 rounded-pill">{{ cart.product.count }}</span>
-                        </a>
-                    </form>
+                    {% if user.is_authenticated %}
+                        <form class="d-flex">
+                            <a class="btn btn-outline-primary" href="{% url 'cart' %}">
+                                <i class="bi-cart-fill me-1"></i>
+                                Корзина
+                                <span class="badge bg-primary text-white ms-1 rounded-pill">{{ user.profile.cart_set.first.product.count }}</span>
+                            </a>
+                        </form>
+                    {% endif %}
                 </div>
             </div>
         </nav>

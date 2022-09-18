@@ -67,7 +67,7 @@ class Cart(models.Model):
     owner = models.ForeignKey(Profile, verbose_name='Владелец', on_delete=models.CASCADE)
     product = models.ManyToManyField('CartProduct', blank=True, related_name='related_cart')
     total_qty = models.PositiveIntegerField(default=0)
-    final_price = models.DecimalField(max_digits=9, decimal_places=2, verbose_name='Общая цена')
+    final_price = models.DecimalField(max_digits=9, decimal_places=2, default=0, verbose_name='Общая цена')
     # delivery = models.BooleanField(default=False, verbose_name='Нужна доставка?')
     time_create = models.DateTimeField(default=timezone.now)
     in_order = models.BooleanField(default=False)
@@ -87,4 +87,8 @@ class CartProduct(models.Model):
 
     def __str__(self):
         return f'Продукт: {self.product_toner.title} (для корзины)'
+
+    def save(self, *args, **kwargs):
+        self.final_price = self.qty * self.product_toner.price
+        super().save(*args, **kwargs)
 

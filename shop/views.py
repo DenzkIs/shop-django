@@ -28,9 +28,10 @@ class AddToCartView(View):
         cart = Cart.objects.get(owner=customer, in_order=False)
         product = Toner.objects.get(slug=product_slug)
         cart_product, created = CartProduct.objects.get_or_create(
-            user=cart.owner, cart=cart, product_toner=product, final_price=product.price
+            user=cart.owner, cart=cart, product_toner=product,
         )
-        cart.product.add(cart_product)
+        if created:
+            cart.product.add(cart_product)
         return HttpResponseRedirect('/cart/')
 
 
@@ -63,14 +64,24 @@ class TonersListView(ListView):
 class BaseView(View):
 
     def get(self, request, *args, **kwargs):
-        customer = Profile.objects.get(user=request.user)
-        cart = Cart.objects.get(owner=customer)
-
+        customer = Profile.objects.get(user=request.user)  # содержит информацию о покупателе
+        cart = Cart.objects.get(owner=customer)  # cодержит информацию о корзине покупателя
+        # далее в шаблоне base.html я вывожу количество товаров в коризине {{ cart.product.count }}
+        # но расширенные шаблоны через {% extends "shop/base.html" %} не знают о переменной cart
+        # как правильно передать cart в base.html, т.к. там в шапке значек корзины с кол-вом товара в ней?
+        # user.user_profile.cart_set.first.product.count
         return render(request, 'shop/base.html', {'cart': cart})
 
 
-def home(request):
-    return render(request, 'shop/home.html', {'printers': Printer.objects.all()})
+class HomeListView(ListView):
+
+    model = Printer
+    template_name = 'shop/home.html'
+    context_object_name = 'printers'
+
+
+# def home(request):
+#     return render(request, 'shop/home.html', {'printers': Printer.objects.all()})
 
 
 def stock(request):
