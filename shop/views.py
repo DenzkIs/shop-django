@@ -3,9 +3,10 @@ from django.http import HttpResponseRedirect
 from shop.models import *
 from users.models import Profile
 from django.views.generic import DetailView, ListView, View
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class CartView(View):
+class CartView(LoginRequiredMixin, View):
 
     # model = Cart
     # context_object_name = 'cart'
@@ -20,7 +21,7 @@ class CartView(View):
         return render(request, 'shop/cart.html', context)
 
 
-class AddToCartView(View):
+class AddToCartView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         product_slug = kwargs.get('slug')
@@ -32,7 +33,24 @@ class AddToCartView(View):
         )
         if created:
             cart.product.add(cart_product)
+        cart.save()
         return HttpResponseRedirect('/cart/')
+
+
+class DeleteFromCartView(View):
+
+    def get(self, request, *args, **kwargs):
+        product_slug = kwargs.get('slug')
+        customer = Profile.objects.get(user=request.user)
+        cart = Cart.objects.get(owner=customer, in_order=False)
+        product = Toner.objects.get(slug=product_slug)
+        cart_product = CartProduct.objects.get(
+            user=cart.owner, cart=cart, product_toner=product,
+        )
+        cart.product.remove(cart_product)
+        cart.save()
+        return HttpResponseRedirect('/cart/')
+
 
 
 class PrinterDetailView(DetailView):

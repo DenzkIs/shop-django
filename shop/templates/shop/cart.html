@@ -12,18 +12,31 @@
                         <th scope="col">Цена</th>
                         <th scope="col">Количество</th>
                         <th scope="col">Общая цена</th>
+                        <th scope="col"></th>
+
                     </tr>
                 </thead>
                 <tbody>
-                    {% for item in cart.related_product.all %}
+                    {% for item in cart.product.all %}
                         <tr>
                             <th scope="row">{{ item.product_toner.title }}</th>
                             <td class="w-25 h-25"><img src="{{ item.product_toner.image.url }}" class="img-fluid"></td>
                             <td>{{ item.product_toner.price }} руб.</td>
                             <td>{{ item.qty }}</td>
                             <td>{{ item.final_price }} руб.</td>
+                            <td>
+                                <a href="{% url 'delete_from_cart' slug=item.product_toner.slug %}">
+                                    <button class="btn btn-danger">Удалить из корзины</button>
+                                </a>
+                            </td>
                         </tr>
                     {% endfor %}
+                    <tr>
+                        <td colspan="2"></td>
+                        <td>Итого:</td>
+                        <td>{{ cart.total_qty }}</td>
+                        <td><strong>{{ cart.final_price }} руб.</strong></td>
+                    </tr>
                 </tbody>
             </table>
         </div>

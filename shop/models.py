@@ -74,7 +74,17 @@ class Cart(models.Model):
     for_anon_user = models.BooleanField(default=False)
 
     def __str__(self):
-        return str(self.id)
+        return str(f'Корзина для {self.owner}')
+
+    def save(self, *args, **kwargs):
+        cart_data = self.product.aggregate(models.Sum('final_price'), models.Count('id'))
+        if cart_data.get('final_price__sum'):
+            self.final_price = cart_data['final_price__sum']
+        else:
+            self.final_price = 0
+        self.total_qty = cart_data['id__count']
+        super().save(*args, **kwargs)
+
 
 
 class CartProduct(models.Model):
@@ -86,7 +96,7 @@ class CartProduct(models.Model):
     final_price = models.DecimalField(max_digits=9, decimal_places=2, verbose_name='Общая цена')
 
     def __str__(self):
-        return f'Продукт: {self.product_toner.title} (для корзины)'
+        return f'Продукт: {self.product_toner.title} для корзины {self.user}'
 
     def save(self, *args, **kwargs):
         self.final_price = self.qty * self.product_toner.price
