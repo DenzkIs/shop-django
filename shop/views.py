@@ -4,6 +4,7 @@ from shop.models import *
 from users.models import Profile
 from django.views.generic import DetailView, ListView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 
 
 class CartView(LoginRequiredMixin, View):
@@ -33,7 +34,10 @@ class AddToCartView(LoginRequiredMixin, View):
         )
         if created:
             cart.product.add(cart_product)
-        cart.save()
+            cart.save()
+            messages.add_message(request, messages.INFO, f"Тонер {product.title} добавлен в корзину")
+        else:
+            messages.add_message(request, messages.INFO, f"Тонер {product.title} уже в корзине!")
         return HttpResponseRedirect('/cart/')
 
 
@@ -48,7 +52,28 @@ class DeleteFromCartView(View):
             user=cart.owner, cart=cart, product_toner=product,
         )
         cart.product.remove(cart_product)
+        cart_product.delete()
         cart.save()
+        messages.add_message(request, messages.INFO, f"Тонер {product.title} удален из корзины")
+        return HttpResponseRedirect('/cart/')
+
+
+class ChangeQtyView(View):
+
+    def post(self, request, *args, **kwargs):
+        product_slug = kwargs.get('slug')
+        customer = Profile.objects.get(user=request.user)
+        cart = Cart.objects.get(owner=customer, in_order=False)
+        product = Toner.objects.get(slug=product_slug)
+        cart_product = CartProduct.objects.get(
+            user=cart.owner, cart=cart, product_toner=product,
+        )
+        qty = int(request.POST.get('qty'))
+        if cart_product.qty != qty:
+            cart_product.qty = qty
+            cart_product.save()
+            cart.save()
+            messages.add_message(request, messages.INFO, f"Количество тонера {product.title} измененно на {qty} шт.")
         return HttpResponseRedirect('/cart/')
 
 

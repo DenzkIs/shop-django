@@ -3,42 +3,51 @@
 
     <section class="py-5">
         <div class="container px-4 px-lg-5 mt-5">
-            <h3 class="text-center mt-5 mb-5">Ваша корзина {% if not cart.related_product.count %}пуста{% endif %}</h3>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">Наименование</th>
-                        <th scope="col">Изображение</th>
-                        <th scope="col">Цена</th>
-                        <th scope="col">Количество</th>
-                        <th scope="col">Общая цена</th>
-                        <th scope="col"></th>
-
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in cart.product.all %}
+            <h3 class="text-center mt-5 mb-5">Ваша корзина {% if not cart.product.count %}пуста{% endif %}</h3>
+            {% if cart.product.count %}
+                <table class="table">
+                    <thead>
                         <tr>
-                            <th scope="row">{{ item.product_toner.title }}</th>
-                            <td class="w-25 h-25"><img src="{{ item.product_toner.image.url }}" class="img-fluid"></td>
-                            <td>{{ item.product_toner.price }} руб.</td>
-                            <td>{{ item.qty }}</td>
-                            <td>{{ item.final_price }} руб.</td>
-                            <td>
-                                <a href="{% url 'delete_from_cart' slug=item.product_toner.slug %}">
-                                    <button class="btn btn-danger">Удалить из корзины</button>
-                                </a>
-                            </td>
+                            <th scope="col">Наименование</th>
+                            <th scope="col">Изображение</th>
+                            <th scope="col">Цена</th>
+                            <th scope="col">Количество</th>
+                            <th scope="col">Общая цена</th>
+                            <th scope="col"></th>
+
                         </tr>
-                    {% endfor %}
-                    <tr>
-                        <td colspan="2"></td>
-                        <td>Итого:</td>
-                        <td>{{ cart.total_qty }}</td>
-                        <td><strong>{{ cart.final_price }} руб.</strong></td>
-                    </tr>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {% for item in cart.product.all %}
+                            <tr>
+                                <th scope="row">{{ item.product_toner.title }}</th>
+                                <td class="w-25 h-25"><img src="{{ item.product_toner.image.url }}" class="img-fluid"></td>
+                                <td>{{ item.product_toner.price }} руб.</td>
+                                <td>
+                                    <form action="{% url 'change_qty' slug=item.product_toner.slug %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="number" class="form-control" name="qty" style="width: 70px" min="1" max="50" value="{{ item.qty }}">
+                                        <br>
+                                        <input type="submit" class ="btn btn-success" value="Изменить кол-во">
+                                    </form>
+                                </td>
+                                <td>{{ item.final_price }} руб.</td>
+                                <td>
+                                    <a href="{% url 'delete_from_cart' slug=item.product_toner.slug %}">
+                                        <button class="btn btn-danger">Удалить из корзины</button>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            <td colspan="2"></td>
+                            <td>Итого:</td>
+                            <td>{{ cart.total_qty }}</td>
+                            <td><strong>{{ cart.final_price }} руб.</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            {% endif %}
         </div>
     </section>
 {% endblock %}
