@@ -1,10 +1,9 @@
-from django.db import models
 from PIL import Image
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from users.models import Profile
 from django.utils import timezone
-
+from django.db import models
 
 User = get_user_model()
 
@@ -101,4 +100,42 @@ class CartProduct(models.Model):
     def save(self, *args, **kwargs):
         self.final_price = self.qty * self.product_toner.price
         super().save(*args, **kwargs)
+
+
+class Order(models.Model):
+
+    STATUS_NEW = 'new'
+    STATUS_IN_PROGRESS = 'in_progress'
+    STATUS_READY = 'is_ready'
+    STATUS_COMPLETED = 'completed'
+
+    DELIVERY_NEED = 'need'
+    DELIVERY_PICKUP = 'pickup'
+
+    STATUS_CHOICES = (
+        (STATUS_NEW, 'Новый'),
+        (STATUS_IN_PROGRESS, 'В обработке'),
+        (STATUS_READY, 'Готов к отгрузке'),
+        (STATUS_COMPLETED, 'Выполнен')
+    )
+
+    DELIVERY_CHOICES = (
+        (DELIVERY_NEED, 'Нужна доставка'),
+        (DELIVERY_PICKUP, 'Самовывоз')
+    )
+
+    customer = models.ForeignKey(Profile, verbose_name='Покупатель', related_name='related_orders', on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=255, verbose_name='Имя')
+    last_name = models.CharField(max_length=255, verbose_name='Фамилия')
+    phone = models.CharField(max_length=20, verbose_name='Телефон')
+    address = models.CharField(max_length=255, verbose_name='Адрес', null=True, blank=True)
+    status = models.CharField(max_length=100, verbose_name='Статус заказа', choices=STATUS_CHOICES, default=STATUS_NEW)
+    delivery = models.CharField(max_length=100, verbose_name='Тип доставки', choices=DELIVERY_CHOICES, default=DELIVERY_PICKUP)
+    comment = models.TextField(verbose_name='Комментарий к заказу', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now=True, verbose_name='Дата создания заказа')
+    order_date = models.DateField(default=timezone.now, verbose_name='Дата доставки (самовывоза) заказа')
+
+    def __str__(self):
+        return f'Заказ №{self.id} ({self.customer})'
+
 
