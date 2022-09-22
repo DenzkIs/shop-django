@@ -5,6 +5,7 @@ from users.models import Profile
 from django.views.generic import DetailView, ListView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
+from .forms import OrderForm
 
 
 class CartView(LoginRequiredMixin, View):
@@ -20,6 +21,28 @@ class CartView(LoginRequiredMixin, View):
             'cart': cart,
         }
         return render(request, 'shop/cart.html', context)
+
+
+class CheckoutView(LoginRequiredMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        customer = Profile.objects.get(user=request.user)
+        cart = Cart.objects.get(owner=customer)
+        form = OrderForm(request.POST or None)
+        context = {
+            'cart': cart,
+            'form': form,
+        }
+        return render(request, 'shop/checkout.html', context)
+
+#
+# class MakeOrderView(LoginRequiredMixin, View):
+#
+#     def post(self, request, *args, **kwargs):
+#         form = OrderForm(request.POST or None)
+#         if form.is_valid():
+#             new_order = form.save(commit=False)
+
 
 
 class AddToCartView(LoginRequiredMixin, View):

@@ -10,6 +10,7 @@ from shop.views import (
     HomeListView,
     DeleteFromCartView,
     ChangeQtyView,
+    CheckoutView,
 
     stock,
     contact,
@@ -29,5 +30,6 @@ urlpatterns = [
     path('add-to-cart/toner/<slug>/', AddToCartView.as_view(), name='add_to_cart'),
     path('remove-from-cart/toner/<slug>/', DeleteFromCartView.as_view(), name='delete_from_cart'),
     path('change-qty/toner/<slug>/', ChangeQtyView.as_view(), name='change_qty'),
+    path('checkout/', CheckoutView.as_view(), name='checkout'),
 
 ]
