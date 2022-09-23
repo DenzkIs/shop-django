@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from shop.models import *
-from users.models import Profile
 from django.views.generic import DetailView, ListView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
+from django.db import transaction
 from .forms import OrderForm
-
+from shop.models import *
+from users.models import Profile
 
 class CartView(LoginRequiredMixin, View):
 
@@ -35,14 +35,36 @@ class CheckoutView(LoginRequiredMixin, View):
         }
         return render(request, 'shop/checkout.html', context)
 
-#
-# class MakeOrderView(LoginRequiredMixin, View):
-#
-#     def post(self, request, *args, **kwargs):
-#         form = OrderForm(request.POST or None)
-#         if form.is_valid():
-#             new_order = form.save(commit=False)
 
+class MakeOrderView(LoginRequiredMixin, View):
+
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        form = OrderForm(request.POST or None)
+        if form.is_valid():
+            new_order = form.save(commit=False)
+            new_order.customer = Profile.objects.get(user=request.user)
+            new_order.first_name = form.cleaned_data['first_name']
+            new_order.last_name = form.cleaned_data['last_name']
+            new_order.phone = form.cleaned_data['phone']
+            new_order.address = form.cleaned_data['address']
+            new_order.delivery = form.cleaned_data['delivery']
+            new_order.order_date = form.cleaned_data['order_date']
+            cart = Cart.objects.get(owner=new_order.customer)
+            new_order.comment = form.cleaned_data['comment']
+            # Данным циклом решаю несколько проблем:
+            # 1) Вывожу в поле комментариев к заказу информацию о заказе.
+            #    Менеджеру не придется лезть и искать корзину, связанную с заказом.
+            # 2) Очищаю корзину, чтобы она отображалась как пустая.
+            for i in cart.product.all():
+                new_order.comment += f'{str(i.product_toner)} - {i.qty} шт.\n'
+                i.delete()
+                cart.save()
+
+            new_order.save()
+            messages.add_message(request, messages.INFO, 'Спасибо за заказ! Менеджер с Вами свяжется')
+            return HttpResponseRedirect('/')
+        return HttpResponseRedirect('/checkout/')
 
 
 class AddToCartView(LoginRequiredMixin, View):
@@ -50,7 +72,7 @@ class AddToCartView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         product_slug = kwargs.get('slug')
         customer = Profile.objects.get(user=request.user)
-        cart = Cart.objects.get(owner=customer, in_order=False)
+        cart = Cart.objects.get(owner=customer)
         product = Toner.objects.get(slug=product_slug)
         cart_product, created = CartProduct.objects.get_or_create(
             user=cart.owner, cart=cart, product_toner=product,
@@ -69,7 +91,7 @@ class DeleteFromCartView(View):
     def get(self, request, *args, **kwargs):
         product_slug = kwargs.get('slug')
         customer = Profile.objects.get(user=request.user)
-        cart = Cart.objects.get(owner=customer, in_order=False)
+        cart = Cart.objects.get(owner=customer)
         product = Toner.objects.get(slug=product_slug)
         cart_product = CartProduct.objects.get(
             user=cart.owner, cart=cart, product_toner=product,
@@ -86,7 +108,7 @@ class ChangeQtyView(View):
     def post(self, request, *args, **kwargs):
         product_slug = kwargs.get('slug')
         customer = Profile.objects.get(user=request.user)
-        cart = Cart.objects.get(owner=customer, in_order=False)
+        cart = Cart.objects.get(owner=customer)
         product = Toner.objects.get(slug=product_slug)
         cart_product = CartProduct.objects.get(
             user=cart.owner, cart=cart, product_toner=product,

@@ -69,8 +69,6 @@ class Cart(models.Model):
     final_price = models.DecimalField(max_digits=9, decimal_places=2, default=0, verbose_name='Общая цена')
     # delivery = models.BooleanField(default=False, verbose_name='Нужна доставка?')
     time_create = models.DateTimeField(default=timezone.now)
-    in_order = models.BooleanField(default=False)
-    for_anon_user = models.BooleanField(default=False)
 
     def __str__(self):
         return str(f'Корзина для {self.owner}')
@@ -125,6 +123,7 @@ class Order(models.Model):
     )
 
     customer = models.ForeignKey(Profile, verbose_name='Покупатель', related_name='related_orders', on_delete=models.CASCADE)
+    cart = models.ForeignKey(Cart, verbose_name='Корзина', on_delete=models.CASCADE, null=True, blank=True)
     first_name = models.CharField(max_length=255, verbose_name='Имя')
     last_name = models.CharField(max_length=255, verbose_name='Фамилия')
     phone = models.CharField(max_length=20, verbose_name='Телефон')
