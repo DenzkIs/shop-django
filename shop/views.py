@@ -51,13 +51,15 @@ class MakeOrderView(LoginRequiredMixin, View):
             new_order.delivery = form.cleaned_data['delivery']
             new_order.order_date = form.cleaned_data['order_date']
             cart = Cart.objects.get(owner=new_order.customer)
-            new_order.comment = form.cleaned_data['comment']
+            new_order.comment = form.cleaned_data['comment'] + f'\n---------------------\n'
+
             # Данным циклом решаю несколько проблем:
             # 1) Вывожу в поле комментариев к заказу информацию о заказе.
             #    Менеджеру не придется лезть и искать корзину, связанную с заказом.
             # 2) Очищаю корзину, чтобы она отображалась как пустая.
+
             for i in cart.product.all():
-                new_order.comment += f'{str(i.product_toner)} - {i.qty} шт.\n'
+                new_order.comment += f'{str(i.product_toner)} - {i.qty} шт. - {i.final_price} руб.\n'
                 i.delete()
                 cart.save()
 
@@ -83,7 +85,8 @@ class AddToCartView(LoginRequiredMixin, View):
             messages.add_message(request, messages.INFO, f"Тонер {product.title} добавлен в корзину")
         else:
             messages.add_message(request, messages.INFO, f"Тонер {product.title} уже в корзине!")
-        return HttpResponseRedirect('/cart/')
+        print(request)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 class DeleteFromCartView(View):
@@ -149,16 +152,16 @@ class TonersListView(ListView):
     context_object_name = 'toners'
 
 
-class BaseView(View):
-
-    def get(self, request, *args, **kwargs):
-        customer = Profile.objects.get(user=request.user)  # содержит информацию о покупателе
-        cart = Cart.objects.get(owner=customer)  # cодержит информацию о корзине покупателя
-        # далее в шаблоне base.html я вывожу количество товаров в коризине {{ cart.product.count }}
-        # но расширенные шаблоны через {% extends "shop/base.html" %} не знают о переменной cart
-        # как правильно передать cart в base.html, т.к. там в шапке значек корзины с кол-вом товара в ней?
-        # user.user_profile.cart_set.first.product.count
-        return render(request, 'shop/base.html', {'cart': cart})
+# class BaseView(View):
+#
+#     def get(self, request, *args, **kwargs):
+#         customer = Profile.objects.get(user=request.user)  # содержит информацию о покупателе
+#         cart = Cart.objects.get(owner=customer)  # cодержит информацию о корзине покупателя
+#         # далее в шаблоне base.html я вывожу количество товаров в корзине {{ cart.product.count }}
+#         # но расширенные шаблоны через {% extends "shop/base.html" %} не знают о переменной cart
+#         # как правильно передать cart в base.html, т.к. там в шапке значек корзины с кол-вом товара в ней?
+#         # user.user_profile.cart_set.first.product.count
+#         return render(request, 'shop/base.html', {'cart': cart})
 
 
 class HomeListView(ListView):

@@ -23,6 +23,7 @@ class Printer(models.Model):
     price = models.DecimalField(max_digits=9, decimal_places=2, verbose_name='Цена')
     image = models.ImageField(default="default.png", upload_to="printer_pics")
     color = models.BooleanField(default=True, verbose_name='Цветной')
+    show_main = models.BooleanField(default=False, verbose_name='Показывать на главной')
 
     def __str__(self):
         return f'{self.cat} : {self.title}'
