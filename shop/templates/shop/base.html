@@ -47,6 +47,9 @@
                             <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Регистрация</a></li>
                         {% endif %}
                     </ul>
+
+                    {% include "shop/currency.html" %}
+
                     {% if user.is_authenticated %}
                         <form class="d-flex">
                             <a class="btn btn-outline-primary" href="{% url 'cart' %}">

@@ -9,6 +9,7 @@ from shop.models import *
 from users.models import Profile
 
 
+
 class SearchView(ListView):
     template_name = 'shop/search.html'
     context_object_name = 'toners'
@@ -194,3 +195,11 @@ def contact(request):
         'shop/contact.html',
         {}
     )
+
+
+# def rate(request):
+#     return render(
+#         request,
+#         'shop/currency.html',
+#         {'currency': currency}
+#     )
