@@ -1,0 +1,110 @@
+{% extends 'shop/base.html' %}
+{% block content %}
+    <section class="py-1 mb-5">
+        <div class="container px-4 px-lg-5 mt-5">
+            <h3 class="text-center mt-1 mb-5">Оригинальный тонер для принтеров и МФУ Konica Minolta</h3>
+            <table class="table">
+                <thead>
+                    <tr class="table-dark">
+                        <th scope="col">Наименование</th>
+                        <th scope="col">Цвет</th>
+                        <th scope="col">Применимость</th>
+                        <th scope="col">Вес тубы (г)</th>
+                        <th scope="col">Цена</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for toner in toners %}
+                        {% if toner.price != 9999 %}
+                            {% if toner.color == 'K' %}
+                                <tr class="table-secondary">
+                                    <th scope="row">{{ toner.title }}</th>
+                                    <td>{{ toner.get_color_display }}</td>
+                                    <td><a href="{% url 'printer-detail' toner.prtr.slug %}"> Konica Minolta {{ toner.prtr.title }}</a></td>
+                                    <td>{{ toner.weight }}</td>
+                                    <td>{{ toner.price }} руб.</td>
+                                    <td>
+                                        <a href="{% url 'add_to_cart' slug=toner.slug %}">
+                                            <button class="btn btn-success">Добавить в корзину</button>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                            {% if toner.color == 'C' %}
+                                <tr class="table-primary">
+                                    <th scope="row">{{ toner.title }}</th>
+                                    <td>{{ toner.get_color_display }}</td>
+                                    <td><a href="{% url 'printer-detail' toner.prtr.slug %}"> Konica Minolta {{ toner.prtr.title }}</a></td>
+                                    <td>{{ toner.weight }}</td>
+                                    <td>{{ toner.price }} руб.</td>
+                                    <td>
+                                        <a href="{% url 'add_to_cart' slug=toner.slug %}">
+                                            <button class="btn btn-success">Добавить в корзину</button>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                            {% if toner.color == 'M' %}
+                                <tr class="table-danger">
+                                    <th scope="row">{{ toner.title }}</th>
+                                    <td>{{ toner.get_color_display }}</td>
+                                    <td><a href="{% url 'printer-detail' toner.prtr.slug %}"> Konica Minolta {{ toner.prtr.title }}</a></td>
+                                    <td>{{ toner.weight }}</td>
+                                    <td>{{ toner.price }} руб.</td>
+                                    <td>
+                                        <a href="{% url 'add_to_cart' slug=toner.slug %}">
+                                            <button class="btn btn-success">Добавить в корзину</button>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                            {% if toner.color == 'Y' %}
+                                <tr class="table-warning">
+                                    <th scope="row">{{ toner.title }}</th>
+                                    <td>{{ toner.get_color_display }}</td>
+                                    <td><a href="{% url 'printer-detail' toner.prtr.slug %}"> Konica Minolta {{ toner.prtr.title }}</a></td>
+                                    <td>{{ toner.weight }}</td>
+                                    <td>{{ toner.price }} руб.</td>
+                                    <td>
+                                        <a href="{% url 'add_to_cart' slug=toner.slug %}">
+                                            <button class="btn btn-success">Добавить в корзину</button>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% else %}
+                            <tr class="table-light">
+                                <th scope="row">{{ toner.title }}</th>
+                                <td>{{ toner.get_color_display }}</td>
+                                <td><a href="{% url 'printer-detail' toner.prtr.slug %}"> Konica Minolta {{ toner.prtr.title }}</a></td>
+                                <td>{{ toner.weight }}</td>
+                                <td> - - - - - </td>
+                                <td> Нет в наличии </td>
+                            </tr>
+                        {% endif %}
+                    {% empty %}
+                        <p>По вашему запросу ничего не найдено. Проверьте правильность ввода</p>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if is_paginated %}
+                {% if page_obj.has_previous %}
+                    <a class="btn btn-outline-primary mb-4" href="?page=1">Первая</a>
+                    <a class="btn btn-outline-primary mb-4" href="?page={{ page_obj.previous_page_number }}"><<</a>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <a class="btn btn-primary mb-4" href="?page={{ num }}">{{ num }}</a>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <a class="btn btn-outline-primary mb-4" href="?page={{ num }}">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <a class="btn btn-outline-primary mb-4" href="?page={{ page_obj.next_page_number }}">>></a>
+                    <a class="btn btn-outline-primary mb-4" href="?page={{ page_obj.paginator.num_pages }}">Последняя</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

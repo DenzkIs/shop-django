@@ -34,7 +34,19 @@
                                 <button class="btn btn-outline-dark flex-shrink-0" type="button">
                                     Скачать спецификацию
                                 </button>
+                                <br>
                             </div>
+                            <br>
+                            {% for t in printer.toner_printer.all %}
+                                <div class="d-flex">
+                                    <a href="{% url 'add_to_cart' slug=t.slug %}">
+                                        <button style="width:120px" class="btn btn-outline-dark flex-shrink-1" type="button">
+                                            <i class="bi-cart-fill me-1"></i>
+                                            {{ t.title }}
+                                        </button>
+                                    </a>
+                                </div>
+                            {% endfor %}
                         </div>
                     {% endif %}
                 </div>

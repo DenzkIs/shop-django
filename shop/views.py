@@ -8,6 +8,19 @@ from .forms import OrderForm
 from shop.models import *
 from users.models import Profile
 
+
+class SearchView(ListView):
+    template_name = 'shop/search.html'
+    context_object_name = 'toners'
+
+    def get_queryset(self):
+        return Toner.objects.filter(title__icontains=self.request.GET.get('s'))
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
 class CartView(LoginRequiredMixin, View):
 
     # model = Cart
@@ -125,7 +138,6 @@ class ChangeQtyView(View):
         return HttpResponseRedirect('/cart/')
 
 
-
 class PrinterDetailView(DetailView):
     model = Printer
     context_object_name = 'printer'
@@ -136,6 +148,8 @@ class BwPrintersListView(ListView):
     queryset = Printer.objects.filter(color=False)
     template_name = 'shop/printers.html'
     context_object_name = 'printers'
+    paginate_by = 4
+    ordering = ['-price']
 
 
 class ColorPrintersListView(ListView):
@@ -143,32 +157,23 @@ class ColorPrintersListView(ListView):
     queryset = Printer.objects.filter(color=True)
     template_name = 'shop/printers.html'
     context_object_name = 'printers'
+    paginate_by = 4
+    ordering = ['-price']
 
 
 class TonersListView(ListView):
     model = Toner
-    # queryset = Printer.objects.filter(color=True)
-    template_name = 'shop/toners.html'
+    template_name = 'shop/toners_table.html'
     context_object_name = 'toners'
-
-
-# class BaseView(View):
-#
-#     def get(self, request, *args, **kwargs):
-#         customer = Profile.objects.get(user=request.user)  # содержит информацию о покупателе
-#         cart = Cart.objects.get(owner=customer)  # cодержит информацию о корзине покупателя
-#         # далее в шаблоне base.html я вывожу количество товаров в корзине {{ cart.product.count }}
-#         # но расширенные шаблоны через {% extends "shop/base.html" %} не знают о переменной cart
-#         # как правильно передать cart в base.html, т.к. там в шапке значек корзины с кол-вом товара в ней?
-#         # user.user_profile.cart_set.first.product.count
-#         return render(request, 'shop/base.html', {'cart': cart})
+    paginate_by = 8
+    ordering = ['title']
 
 
 class HomeListView(ListView):
-
     model = Printer
     template_name = 'shop/home.html'
     context_object_name = 'printers'
+    ordering = ['-price']
 
 
 # def home(request):
