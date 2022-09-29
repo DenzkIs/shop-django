@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from users.models import Profile
 from django.utils import timezone
 from django.db import models
+from .utils import currency
 
 User = get_user_model()
 
@@ -93,11 +94,17 @@ class CartProduct(models.Model):
     qty = models.PositiveIntegerField(default=1)
     final_price = models.DecimalField(max_digits=9, decimal_places=2, verbose_name='Общая цена')
 
+
     def __str__(self):
         return f'Продукт: {self.product_toner.title} для корзины {self.user}'
 
+    @property
+    def discount_price(self):
+        return self.final_price / self.qty
+
+
     def save(self, *args, **kwargs):
-        self.final_price = self.qty * self.product_toner.price
+        self.final_price = self.qty * float(self.product_toner.price) * float(self.user.discount) * currency['euro_ex_rate']
         super().save(*args, **kwargs)
 
 

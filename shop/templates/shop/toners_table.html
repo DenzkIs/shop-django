@@ -29,7 +29,7 @@
                                     <td>{{ toner.get_color_display }}</td>
                                     <td><a href="{% url 'printer-detail' toner.prtr.slug %}"> Konica Minolta {{ toner.prtr.title }}</a></td>
                                     <td>{{ toner.weight }}</td>
-                                    <td>{{ toner.price }} руб.</td>
+                                    <td>{{ toner.price|floatformat:2 }} руб.</td>
                                     <td>
                                         <a href="{% url 'add_to_cart' slug=toner.slug %}">
                                             <button class="btn btn-success">Добавить в корзину</button>
@@ -43,7 +43,7 @@
                                     <td>{{ toner.get_color_display }}</td>
                                     <td><a href="{% url 'printer-detail' toner.prtr.slug %}"> Konica Minolta {{ toner.prtr.title }}</a></td>
                                     <td>{{ toner.weight }}</td>
-                                    <td>{{ toner.price }} руб.</td>
+                                    <td>{{ toner.price|floatformat:2 }} руб.</td>
                                     <td>
                                         <a href="{% url 'add_to_cart' slug=toner.slug %}">
                                             <button class="btn btn-success">Добавить в корзину</button>
@@ -57,7 +57,7 @@
                                     <td>{{ toner.get_color_display }}</td>
                                     <td><a href="{% url 'printer-detail' toner.prtr.slug %}"> Konica Minolta {{ toner.prtr.title }}</a></td>
                                     <td>{{ toner.weight }}</td>
-                                    <td>{{ toner.price }} руб.</td>
+                                    <td>{{ toner.price|floatformat:2 }} руб.</td>
                                     <td>
                                         <a href="{% url 'add_to_cart' slug=toner.slug %}">
                                             <button class="btn btn-success">Добавить в корзину</button>
@@ -71,7 +71,7 @@
                                     <td>{{ toner.get_color_display }}</td>
                                     <td><a href="{% url 'printer-detail' toner.prtr.slug %}"> Konica Minolta {{ toner.prtr.title }}</a></td>
                                     <td>{{ toner.weight }}</td>
-                                    <td>{{ toner.price }} руб.</td>
+                                    <td>{{ toner.price|floatformat:2 }} руб.</td>
                                     <td>
                                         <a href="{% url 'add_to_cart' slug=toner.slug %}">
                                             <button class="btn btn-success">Добавить в корзину</button>

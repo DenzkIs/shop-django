@@ -10,7 +10,6 @@ from users.models import Profile
 from .utils import currency
 
 
-
 class SearchView(ListView):
     template_name = 'shop/search.html'
     context_object_name = 'toners'
@@ -24,10 +23,6 @@ class SearchView(ListView):
 
 
 class CartView(LoginRequiredMixin, View):
-
-    # model = Cart
-    # context_object_name = 'cart'
-    # template_name = 'shop/cart.html'
 
     def get(self, request, *args, **kwargs):
         customer = Profile.objects.get(user=request.user)
@@ -136,7 +131,7 @@ class ChangeQtyView(View):
             cart_product.qty = qty
             cart_product.save()
             cart.save()
-            messages.add_message(request, messages.INFO, f"Количество тонера {product.title} измененно на {qty} шт.")
+            messages.add_message(request, messages.INFO, f"Количество тонера {product.title} изменено на {qty} шт.")
         return HttpResponseRedirect('/cart/')
 
 
@@ -183,8 +178,8 @@ class TonersListView(ListView):
         if self.request.user.is_authenticated:
             user = self.request.user
             discount = float(user.profile.discount)
-            return round(price * discount * currency['euro_ex_rate'], 2)
-        return round(price * currency['euro_ex_rate'], 2)
+            return price * discount * currency['euro_ex_rate']
+        return price * currency['euro_ex_rate']
 
 
 class HomeListView(ListView):
@@ -212,7 +207,6 @@ def contact(request):
         'shop/contact.html',
         {}
     )
-
 
 # def rate(request):
 #     return render(
