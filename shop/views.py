@@ -7,6 +7,7 @@ from django.db import transaction
 from .forms import OrderForm
 from shop.models import *
 from users.models import Profile
+from .utils import currency
 
 
 
@@ -168,6 +169,22 @@ class TonersListView(ListView):
     context_object_name = 'toners'
     paginate_by = 8
     ordering = ['title']
+
+    def get_context_data(self, **kwargs):
+
+        context = super(TonersListView, self).get_context_data(**kwargs)
+        for toner in context['object_list']:
+            toner.price = self.calculate_discount_price(self, toner.price)
+        return context
+
+    @staticmethod
+    def calculate_discount_price(self, price):
+        price = float(price)
+        if self.request.user.is_authenticated:
+            user = self.request.user
+            discount = float(user.profile.discount)
+            return round(price * discount * currency['euro_ex_rate'], 2)
+        return round(price * currency['euro_ex_rate'], 2)
 
 
 class HomeListView(ListView):

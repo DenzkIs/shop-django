@@ -22,7 +22,7 @@
                 </thead>
                 <tbody>
                     {% for toner in toners %}
-                        {% if toner.price != 9999 %}
+                        {% if toner.price < 8000 %}
                             {% if toner.color == 'K' %}
                                 <tr class="table-secondary">
                                     <th scope="row">{{ toner.title }}</th>
