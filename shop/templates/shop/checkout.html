@@ -27,9 +27,9 @@
                     {% endfor %}
                     <tr>
                         <td colspan="2"></td>
+                        <td></td>
                         <td>Итого:</td>
-                        <td>{{ cart.total_qty }}</td>
-                        <td><strong>{{ cart.final_price }} руб.</strong></td>
+                        <td><strong>{{ cart.f_price|floatformat:2 }} руб.</strong></td>
                     </tr>
                 </tbody>
             </table>
