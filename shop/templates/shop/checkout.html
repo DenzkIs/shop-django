@@ -20,7 +20,7 @@
                         <tr>
                             <th scope="row">{{ item.product_toner.title }}</th>
                             <td><img src="{{ item.product_toner.image.url }}" class="img-fluid" style="height:100px"></td>
-                            <td>{{ item.discount_price }} руб.</td>
+                            <td>{{ item.discount_price|floatformat:2 }} руб.</td>
                             <td>{{ item.qty }}</td>
                             <td>{{ item.final_price }} руб.</td>
                         </tr>

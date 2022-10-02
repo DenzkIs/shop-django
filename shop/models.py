@@ -67,7 +67,7 @@ class Toner(models.Model):
 class Cart(models.Model):
 
     owner = models.ForeignKey(Profile, verbose_name='Владелец', on_delete=models.CASCADE)
-    product = models.ManyToManyField('CartProduct', blank=True, related_name='related_cart')
+    product = models.ManyToManyField('CartProduct', blank=True, null=True, related_name='related_cart')
     total_qty = models.PositiveIntegerField(default=0)
     final_price = models.DecimalField(max_digits=9, decimal_places=2, default=0, verbose_name='Общая цена')
     time_create = models.DateTimeField(default=timezone.now)
@@ -76,12 +76,13 @@ class Cart(models.Model):
         return str(f'Корзина для {self.owner}')
 
     def save(self, *args, **kwargs):
-        cart_data = self.product.aggregate(models.Sum('final_price'), models.Count('id'))
-        if cart_data.get('final_price__sum'):
-            self.final_price = cart_data['final_price__sum']
-        else:
-            self.final_price = 0
-        self.total_qty = cart_data['id__count']
+        # super().save(*args, **kwargs)
+        # cart_data = self.product.aggregate(models.Sum('final_price'), models.Count('id'))
+        # if cart_data.get('final_price__sum'):
+        #     self.final_price = cart_data['final_price__sum']
+        # else:
+        #     self.final_price = 0
+        # self.total_qty = cart_data['id__count']
         super().save(*args, **kwargs)
 
 
@@ -98,14 +99,13 @@ class CartProduct(models.Model):
     def __str__(self):
         return f'Продукт: {self.product_toner.title} для корзины {self.user}'
 
-    @property
-    def discount_price(self):
-        return self.final_price / self.qty
-
-
     def save(self, *args, **kwargs):
         self.final_price = self.qty * float(self.product_toner.price) * float(self.user.discount) * currency['euro_ex_rate']
         super().save(*args, **kwargs)
+
+    @property
+    def discount_price(self):
+        return self.final_price / self.qty
 
 
 class Order(models.Model):
