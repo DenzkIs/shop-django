@@ -20,3 +20,9 @@ class OrderForm(forms.ModelForm):
         widgets = {
             'comment': forms.Textarea(attrs={'rows': 4}),
         }
+
+
+class ContactForm(forms.Form):
+    subject = forms.CharField(label='Тема сообщения', widget=forms.TextInput(attrs={'class': 'form-control'}))
+    # sender = forms.EmailField(label = 'Ваш email', widget = forms.EmailInput(attrs = {'class': 'form-control'}))
+    content = forms.CharField(label='Сообщение', widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5}))

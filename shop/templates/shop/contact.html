@@ -27,9 +27,16 @@
 					УНП: 100706534, ОКПО: 28623339 </dd>
 				</dl>
 			</div>
+			<div class="col-lg-4 mt-5">
+				<h3>Обратная связь</h3>
+				<hr>
+				<form action="" method="post">
+					{% csrf_token %}
+					{{ form.as_p }}
+					<button type="submit" class="btn btn-success btn-block">Отправить сообщение</button>
+				</form>
+			</div>
 		</div>
-		<div class = "mt-5 mb-5">
-			{% include "shop/map.html" %}
-		</div>
+
 	</div>
 {% endblock content %}

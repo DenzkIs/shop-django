@@ -1,10 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.views.generic import DetailView, ListView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.db import transaction
-from .forms import OrderForm
+from django.core.mail import send_mail
+from .forms import OrderForm, ContactForm
 from shop.models import *
 from users.models import Profile
 from .utils import currency
@@ -201,16 +202,26 @@ def stock(request):
     )
 
 
-def contact(request):
-    return render(
-        request,
-        'shop/contact.html',
-        {}
-    )
-
 # def rate(request):
 #     return render(
 #         request,
 #         'shop/currency.html',
 #         {'currency': currency}
 #     )
+
+
+def contact(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            mail = send_mail(form.cleaned_data['subject'], form.cleaned_data['content'], 'djangofreetest@gmail.com', ['zhurid.dk@gmail.com'], fail_silently=True)
+            if mail:
+                messages.success(request, 'Письмо отправлено!')
+                return redirect('shop-home')
+            else:
+                messages.warning(request, 'Ошибка отправки!')
+        else:
+            messages.warning(request, 'Ошибка регистрации!')
+    else:
+        form = ContactForm()
+    return render(request, 'shop/contact.html', {'form': form})
