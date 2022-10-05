@@ -64,6 +64,16 @@ class Toner(models.Model):
     def __str__(self):
         return f'{self.cat} : {self.title}'
 
+    @property
+    def class_for_template(self):
+        if self.color == 'K':
+            return 'table-secondary'
+        elif self.color == 'Y':
+            return 'table-warning'
+        elif self.color == 'M':
+            return 'table-danger'
+        else:
+            return 'table-primary'
 
 class Cart(models.Model):
 
@@ -124,13 +134,13 @@ class CartProduct(models.Model):
 
 class Order(models.Model):
 
-    STATUS_NEW = 'new'
-    STATUS_IN_PROGRESS = 'in_progress'
-    STATUS_READY = 'is_ready'
-    STATUS_COMPLETED = 'completed'
+    STATUS_NEW = 'Новый'
+    STATUS_IN_PROGRESS = 'В обработка'
+    STATUS_READY = 'Готов'
+    STATUS_COMPLETED = 'Выполнен'
 
-    DELIVERY_NEED = 'need'
-    DELIVERY_PICKUP = 'pickup'
+    DELIVERY_NEED = 'Нужна доставка'
+    DELIVERY_PICKUP = 'Самовывоз'
 
     STATUS_CHOICES = (
         (STATUS_NEW, 'Новый'),
@@ -157,6 +167,6 @@ class Order(models.Model):
     order_date = models.DateField(default=timezone.now, verbose_name='Дата доставки (самовывоза) заказа')
 
     def __str__(self):
-        return f'Заказ №{self.id} ({self.customer})'
+        return f'Заказ №{self.id} ({self.customer.company_name}) - {self.status}'
 
 

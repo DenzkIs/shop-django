@@ -6,7 +6,7 @@
             <div class="media-body">
                 <h2 class="account-heading">{{ user.username }}</h2>
                 <p class="text-secondary">{{ user.email }}</p>
-                <p class="text-secondary">Ваша текущая скидка составляет {{ user.profile.discount }}</p>
+                <p class="text-secondary">Ваша текущая скидка составляет {{ user.profile.discount_percent|floatformat:0 }} %</p>
             </div>
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}

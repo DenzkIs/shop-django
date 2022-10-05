@@ -76,6 +76,11 @@ class MakeOrderView(LoginRequiredMixin, View):
 
             new_order.save()
             messages.add_message(request, messages.INFO, 'Спасибо за заказ! Менеджер с Вами свяжется')
+            send_mail(
+                f'Новый заказ на сайте №{new_order.pk} ({new_order.customer.company_name})',
+                new_order.comment, 'djangofreetest@gmail.com', ['zhurid.dk@gmail.com'], fail_silently=True
+            )
+
             return HttpResponseRedirect('/')
         return HttpResponseRedirect('/checkout/')
 
