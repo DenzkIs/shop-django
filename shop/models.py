@@ -136,7 +136,7 @@ class Order(models.Model):
 
     STATUS_NEW = 'Новый'
     STATUS_IN_PROGRESS = 'В обработка'
-    STATUS_READY = 'Готов'
+    STATUS_READY = 'Готов к отгрузке'
     STATUS_COMPLETED = 'Выполнен'
 
     DELIVERY_NEED = 'Нужна доставка'

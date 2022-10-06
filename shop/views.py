@@ -168,8 +168,8 @@ class TonersListView(ListView):
     model = Toner
     template_name = 'shop/toners_table.html'
     context_object_name = 'toners'
-    paginate_by = 8
-    ordering = ['title']
+    paginate_by = 12
+    ordering = ['price']
 
     def get_context_data(self, **kwargs):
 
