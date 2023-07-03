@@ -88,6 +88,7 @@ class MakeOrderView(LoginRequiredMixin, View):
 class AddToCartView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
+        print(kwargs)
         product_slug = kwargs.get('slug')
         customer = Profile.objects.get(user=request.user)
         cart = Cart.objects.get(owner=customer)
